@@ -31,7 +31,7 @@
     </style>
  </head>
 <body>
-    <h2 style="background-color: lightgreen;">Topic: <b id="topic"></b>(<i id="q_num"></i> questions)</h2>
+    <h2 style="background-color: lightgreen;">Topic: <b id="topic"></b> (<i id="q_num"></i> questions)</h2>
     <div id="mcq"></div><table style="border-top: dashed blueviolet;"><tr>
     <td><button onclick="all_answers()">Show all answers</td> 
     <td><button onclick="hide_answers()">Hide answers</td></tr></table>
@@ -55,14 +55,15 @@
         }
         function load_questions() {
             document.getElementById("topic").innerText = exercise.topic;
-            let q_num = 1;
+            let q_num = 0;
             function mcq_format(entry) {
+                q_num++;
                 let res = "Q"+q_num+": <b style='color: blueviolet'>"+entry.q+"</b>";
                 let choice_id = "A";
                 if (entry.multi) {
                     res += "(select all that applies)";
                 }
-                res += "<input type='checkbox' oninput='show_answer("+q_num+")'>\
+                res += "<input type='checkbox' oninput='show_answer("+q_num+")'>see answer\
                     <textarea id='ans_"+q_num+"' readonly rows='1' style='display: none; background-color: skyblue'>"+entry.ans+"</textarea> <table>"
                 function choice_format(choice) {
                     if (!entry.multi) {
@@ -75,11 +76,11 @@
                 }
                 entry.choices.map(choice_format);
                 res += "</table>";
-                q_num++;
                 return res;
             }
             function wrt_format(entry) {
-                let res = "Q"+q_num+": <b style='color: blueviolet'>"+entry.intro+"</b>"+"<input type='checkbox' oninput='show_answer("+q_num+")'>"+"<div style='padding: 10px'>";
+                q_num++;
+                let res = "Q"+q_num+": <b style='color: blueviolet'>"+entry.intro+"</b>"+"<input type='checkbox' oninput='show_answer("+q_num+")'>see answer"+"<div style='padding: 10px'>";
                 function wrt_display(seg) {
                     res += seg.q;
                     res += "<textarea rows='"+seg.a[0]+"' cols='"+seg.a[1]+"'></textarea>";
@@ -91,7 +92,6 @@
                 res += entry.rem+"</div><div id='ans_"+q_num+"' style='display: none'>"; 
                 entry.ans.map(wrt_answer);
                 res+="</div>";
-                q_num++;
                 return res;
             }
             function add_html(acc, q) {
