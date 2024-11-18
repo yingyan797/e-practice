@@ -31,14 +31,26 @@
     </style>
  </head>
 <body>
-    <h2 style="background-color: lightgreen;">Topic: <i id="topic"></i></h2>
-    <div id="mcq"></div>
+    <h2 style="background-color: lightgreen;">Topic: <b id="topic"></b>(<i id="q_num"></i> questions)</h2>
+    <div id="mcq"></div><table style="border-top: dashed blueviolet;"><tr>
+    <td><button onclick="all_answers()">Show all answers</td> 
+    <td><button onclick="hide_answers()">Hide answers</td></tr></table>
     <script>
         function show_answer(num) {
             if (document.getElementById("ans_"+num).style.display == "none") {
                 document.getElementById("ans_"+num).style.display = "block";
             } else {
                 document.getElementById("ans_"+num).style.display = "none";
+            }
+        }
+        function all_answers() {
+            for (i = 1; i <= document.getElementById("q_num").innerText; i++) {
+                document.getElementById("ans_"+i).style.display = "block";
+            }
+        }
+        function hide_answers() {
+            for (i = 1; i <= document.getElementById("q_num").innerText; i++) {
+                document.getElementById("ans_"+i).style.display = "none";
             }
         }
         function load_questions() {
@@ -51,7 +63,7 @@
                     res += "(select all that applies)";
                 }
                 res += "<input type='checkbox' oninput='show_answer("+q_num+")'>\
-                    <textarea id='ans_"+q_num+"' readonly rows='1' style='display: none'>"+entry.ans+"</textarea> <table>"
+                    <textarea id='ans_"+q_num+"' readonly rows='1' style='display: none; background-color: skyblue'>"+entry.ans+"</textarea> <table>"
                 function choice_format(choice) {
                     if (!entry.multi) {
                         res += "<tr><th><input type='radio' name='single_"+q_num+"' \
@@ -87,6 +99,7 @@
             }
             document.getElementById("mcq").innerHTML = exercise.mcq.map(mcq_format).reduce(add_html);
             document.getElementById("mcq").innerHTML += exercise.written.map(wrt_format).reduce(add_html);
+            document.getElementById("q_num").innerText = q_num;
         }
         try{
             load_questions();
