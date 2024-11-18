@@ -1,0 +1,98 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+    <title>CS Questions</title>
+    <script src="static/questions.js"></script>
+    <style>
+        button {
+            border: dashed cornflowerblue;
+            padding: 0.2rem 1rem;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            margin: 0; /* Remove margin to fill cell completely */
+        }
+
+        th,td {
+            border: 1px solid cornflowerblue;
+            padding: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            background-color: lightgoldenrodyellow;
+        }
+
+        /* Responsive layout */
+        @media screen and (min-width: 768px) {
+            button {
+                width: auto;
+            }
+        }
+    </style>
+ </head>
+<body>
+    <h2 style="background-color: lightgreen;">Topic: <i id="topic"></i></h2>
+    <div id="mcq"></div>
+    <script>
+        function show_answer(num) {
+            if (document.getElementById("ans_"+num).style.display == "none") {
+                document.getElementById("ans_"+num).style.display = "block";
+            } else {
+                document.getElementById("ans_"+num).style.display = "none";
+            }
+        }
+        function load_questions() {
+            document.getElementById("topic").innerText = exercise.topic;
+            let q_num = 1;
+            function mcq_format(entry) {
+                let res = "Q"+q_num+": <b style='color: blueviolet'>"+entry.q+"</b>";
+                let choice_id = "A";
+                if (entry.multi) {
+                    res += "(select all that applies)";
+                }
+                res += "<input type='checkbox' oninput='show_answer("+q_num+")'>\
+                    <textarea id='ans_"+q_num+"' readonly rows='1' style='display: none'>"+entry.ans+"</textarea> <table>"
+                function choice_format(choice) {
+                    if (!entry.multi) {
+                        res += "<tr><th><input type='radio' name='single_"+q_num+"' \
+                            value='"+choice_id+"'>"+choice_id+"</th><td>"+choice+"</td><tr>";
+                    } else {
+                        res += "<tr><th><input type='checkbox' id='multi_'"+choice+"'>"+choice_id+"</th><td>"+choice+"</td><tr>";
+                    }
+                    choice_id = String.fromCharCode(choice_id.charCodeAt(0) + 1);
+                }
+                entry.choices.map(choice_format);
+                res += "</table>";
+                q_num++;
+                return res;
+            }
+            function wrt_format(entry) {
+                let res = "Q"+q_num+": <b style='color: blueviolet'>"+entry.intro+"</b>"+"<input type='checkbox' oninput='show_answer("+q_num+")'>"+"<div style='padding: 10px'>";
+                function wrt_display(seg) {
+                    res += seg.q;
+                    res += "<textarea rows='"+seg.a[0]+"' cols='"+seg.a[1]+"'></textarea>";
+                }
+                function wrt_answer(a) {
+                    res += "<p style='background-color: skyblue; width: 50%''>"+a+"</p>";
+                }
+                entry.questions.map(wrt_display);
+                res += entry.rem+"</div><div id='ans_"+q_num+"' style='display: none'>"; 
+                entry.ans.map(wrt_answer);
+                res+="</div>";
+                q_num++;
+                return res;
+            }
+            function add_html(acc, q) {
+                return acc + q;
+            }
+            document.getElementById("mcq").innerHTML = exercise.mcq.map(mcq_format).reduce(add_html);
+            document.getElementById("mcq").innerHTML += exercise.written.map(wrt_format).reduce(add_html);
+        }
+        try{
+            load_questions();
+        } catch (err) {
+            alert(err);
+        }
+        
+    </script>
+</body>
